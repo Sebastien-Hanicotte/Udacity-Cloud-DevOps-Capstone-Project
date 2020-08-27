@@ -22,7 +22,6 @@ pipeline {
             parallel {
                 stage('Lint HTML') {
                     steps {
-                        #sh 'tidy -q -e *.html'
                         script { 
                            docker.image('imega/base-builder:1.2.0').inside() {
                                sh 'tidy -q -e *.html' | tee -a imega_tidy.txt'
