@@ -13,9 +13,24 @@ pipeline {
         stage('Lint') {
             parallel {
                 stage('Lint HTML') {
-                     steps {
-                         sh 'tidy -q -e *.html'
-                     }
+                    steps {
+                        #sh 'tidy -q -e *.html'
+                        script { 
+                           docker.image('imega/base-builder:1.2.0').inside() {
+                               sh 'tidy -q -e *.html' | tee -a imega_tidy.txt'
+                               sh '''
+                                   tidyErrors=$(stat --printf="%s" imega_tidy.txt)
+                                   if [ "$tidtErrors" -gt "0" ]; then
+                                       echo "Errors have been found, please see below"
+                                       cat imega_tidy.txt
+                                       exit 1
+                                   else
+                                       echo "There are no erros found on index.html!!"
+                                   fi
+                               '''
+                           }
+                        }
+                    }
                 }
                 stage('Lint Dockerfile') {
                     steps {
