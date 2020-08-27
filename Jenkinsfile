@@ -24,7 +24,7 @@ pipeline {
                     steps {
                         script { 
                            docker.image('imega/base-builder:1.2.0').inside() {
-                               sh 'tidy -q -e *.html' | tee -a imega_tidy.txt'
+                               sh 'tidy -q -e *.html | tee -a imega_tidy.txt'
                                sh '''
                                    tidyErrors=$(stat --printf="%s" imega_tidy.txt)
                                    if [ "$tidtErrors" -gt "0" ]; then
