@@ -1,6 +1,17 @@
-FROM php:7.2
+FROM node:latest
 
-WORKDIR /var/www/
+WORKDIR /app
 
-COPY index.html /var/www/
+#RUN npm install -g contentful-cli
 
+COPY app/package.json .
+RUN npm install
+
+COPY app/. .
+
+RUN npm run build
+
+USER node
+EXPOSE 3000
+
+CMD ["npm", "run", "start"]
