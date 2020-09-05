@@ -1,16 +1,20 @@
 pipeline {
+    environment {
+        dockerhubCredentials = 'dockerhubCredentials'
+    }
     agent any
     tools {
         nodejs "node"
     }
     stages {
-        stage('Build') {
+        stage('Hashing images') {
             steps {
-                sh 'echo "Hello World"'
-                sh '''
-                    echo "Multiline shell steps works too"
-                    ls -lah
-                   '''
+                script {
+                    env.GIT_HASH = sh(
+                        script: "git show --oneline | head -1 | cut -d' ' -f1",
+                        returnStdout: true
+                    ).trim()
+                }
             }
         }
         stage('Lint Dockerfile') {
@@ -47,5 +51,38 @@ pipeline {
                 sh 'CI=true npm test --prefix app'
             }
         }
+        stage('Build') {
+            steps {
+                sh 'npm run build --prefix app'
+            }
+        }
+        stage('Build & Push to dockerhub') {
+            steps {
+                script {
+                    dockerImage = docker.build("chtiseb/capstone-project:${env.GIT_HASH}")
+                    docker.withRegistry('', dockerhubCredentials) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage('Scan Dockerfile to find vulnerabilities') {
+            steps{
+                aquaMicroscanner imageName: "chtiseb/capstone-project:${env.GIT_HASH}", notCompliesCmd: 'exit 4', onDisallowed: 'fail', outputFormat: 'html'
+            }
+        }
+        stage('Build Docker Container') {
+      		steps {
+			    sh 'docker run --name capstone -d -p 80:80 chtiseb/capstone-project:${env.GIT_HASH}'
+            }
+        }
+        stage("Cleaning Docker up") {
+            steps {
+                script {
+                    sh "echo 'Cleaning Docker up'"
+                    sh "docker system prune"
+                }
+            }
+        } 
     }
 }
