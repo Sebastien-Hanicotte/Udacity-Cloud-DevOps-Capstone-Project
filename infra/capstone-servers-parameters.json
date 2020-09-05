@@ -1,0 +1,14 @@
+[
+	{
+		"ParameterKey": "EnvironmentName",
+		"ParameterValue": "production"
+	},
+	{
+		"ParameterKey": "ProjectName",
+		"ParameterValue": "Capstone"
+	},
+	{
+		"ParameterKey": "KeyName",
+		"ParameterValue": "capstone"
+	}
+]
