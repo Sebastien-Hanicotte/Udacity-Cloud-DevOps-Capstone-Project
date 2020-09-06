@@ -1,5 +1,7 @@
 FROM node:14.9.0
 
+# ignore DL3009 Delete the apt-get lists after installing something
+# hadolint ignore=DL3009
 RUN apt-get update
 # ignore DL3005 Do not use apt-get upgrade or dist-upgrade
 # hadolint ignore=DL3005
