@@ -1,7 +1,11 @@
 FROM node:14.9.0
 
 RUN apt-get update
+# ignore DL3005 Do not use apt-get upgrade or dist-upgrade
+# hadolint ignore=DL3005
 RUN apt-get upgrade -y
+RUN apt-get clean
+&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
