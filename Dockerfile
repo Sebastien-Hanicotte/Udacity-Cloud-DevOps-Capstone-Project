@@ -26,4 +26,4 @@ USER node
 EXPOSE 3000
 
 # Running serve -s build -l 3000 to expose production ready react-js application
-CMD ["serve", "-s", "build", "-l", "3000", "--host", "0.0.0.0", "--disable-host-check"]
+CMD ["serve", "-s", "build", "-l", "3000"]
