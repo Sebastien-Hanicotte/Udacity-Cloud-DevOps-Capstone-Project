@@ -115,6 +115,7 @@ I wanted to be able to :
 - [x]  Deploy the image to the EKS Cluster
 - [x]  Clean and Finish
 
+![Failed Lint Jenkins Pipeline](doc/Jenkins-Failed-Lint-Pipeline.png)
 ![Successful Jenkins Pipeline](doc/Jenkins-Successful-Pipeline.png)
 
 ## CircleCI
