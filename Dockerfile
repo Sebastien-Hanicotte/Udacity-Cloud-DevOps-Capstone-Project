@@ -20,7 +20,7 @@ COPY app/. .
 RUN npm run build
 
 # Installing serve to propose production ready deployment
-RUN npm install -g serve
+RUN npm install -g serve@11.3.2
 
 USER node
 EXPOSE 3000
