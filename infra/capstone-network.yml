@@ -131,11 +131,23 @@ Resources:
                 - Key: Name
                   Value: !Sub ${EnvironmentName} Private Subnet (AZ3)
 
-    # NatBastion1EIP:
-    #     Type: AWS::EC2::EIP
-    #     DependsOn: InternetGatewayAttachment
-    #     Properties: 
-    #         Domain: vpc
+    NatBastion1EIP:
+        Type: AWS::EC2::EIP
+        DependsOn: InternetGatewayAttachment
+        Properties:
+            Domain: vpc
+
+    NatBastion2EIP:
+        Type: AWS::EC2::EIP
+        DependsOn: InternetGatewayAttachment
+        Properties:
+            Domain: vpc
+#
+#    NatBastion3EIP:
+#        Type: AWS::EC2::EIP
+#        DependsOn: InternetGatewayAttachment
+#        Properties:
+#            Domain: vpc
 
     NatGateway1EIP:
         Type: AWS::EC2::EIP
@@ -360,8 +372,26 @@ Outputs:
         Description: Security group for the EKS
         Value: !Join [ ",", [ !Ref EKSSecurityGroup ] ]
 
-    # NatBastion1EIP:
-    #     Description: A reference to the EIP which will be used by the Bastion EC2
-    #     Value: !Ref NatBastion1EIP
-    #     Export:
-    #         Name: !Sub ${EnvironmentName}-BAS1-EIP
+    BastionInstance1EIP:
+        Description: EIP for Bastion 1
+        Value: !Ref NatBastion1EIP
+        Export:
+            Name: !Sub ${EnvironmentName}-Bastion1-EIP
+
+    BastionInstance2EIP:
+        Description: EIP for Bastion 2
+        Value: !Ref NatBastion2EIP
+        Export:
+            Name: !Sub ${EnvironmentName}-Bastion2-EIP
+
+#    BastionInstance3EIP:
+#        Description: EIP for Bastion 3
+#        Value: !Ref NatBastion3EIP
+#        Export:
+#            Name: !Sub ${EnvironmentName}-Bastion3-EIP
+
+#    NatBastion1EIP:
+#        Description: A reference to the EIP which will be used by the Bastion EC2
+#         Value: !Ref NatBastion1EIP
+#         Export:
+#             Name: !Sub ${EnvironmentName}-BAS1-EIP

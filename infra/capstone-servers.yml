@@ -156,6 +156,105 @@ Mappings:
 
 Resources:
 
+  BastionInstance1:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: "ami-04137ed1a354f54c4"
+      InstanceType: !Ref WorkerNodeInstanceType
+      KeyName: !Ref KeyName
+      SubnetId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-PUB1-SN"
+      SecurityGroupIds:
+        - !Ref BastionSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-BastionInstance'
+
+  BastionInstance2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: "ami-04137ed1a354f54c4"
+      InstanceType: !Ref WorkerNodeInstanceType
+      KeyName: !Ref KeyName
+      SubnetId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-PUB2-SN"
+      SecurityGroupIds:
+        - !Ref BastionSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-BastionInstance'
+
+  BastionInstance3:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: "ami-04137ed1a354f54c4"
+      InstanceType: !Ref WorkerNodeInstanceType
+      KeyName: !Ref KeyName
+      SubnetId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-PUB3-SN"
+      SecurityGroupIds:
+        - !Ref BastionSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-BastionInstance'
+
+  BastionInstance1EIP:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      EIP:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-Bastion1-EIP"
+      InstanceId:
+        !Ref BastionInstance1
+
+  BastionInstance2EIP:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      EIP:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-Bastion2-EIP"
+      InstanceId:
+        !Ref BastionInstance2
+
+#  BastionInstance3EIP:
+#    Type: AWS::EC2::EIPAssociation
+#    Properties:
+#      EIP:
+#        Fn::ImportValue:
+#          !Sub "${EnvironmentName}-Bastion3-EIP"
+#      InstanceId:
+#        !Ref BastionInstance3
+
+  BastionSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription:
+        !Sub 'Security group for ${AWS::StackName} bastion host'
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-VPCID"
+
+  BastionAllowInboundSSHFromInternet:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref BastionSecurityGroup
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: 0.0.0.0/0
+
+  BastionAllowOutboundSSHToWorker:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref BastionSecurityGroup
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      DestinationSecurityGroupId: !Ref WorkerNodeSecurityGroup
+
   LBSecGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -370,6 +469,27 @@ Resources:
       IpProtocol: tcp
       FromPort: 443
       ToPort: 443
+
+  AllowIPv4SSHsInboundToBastionFromWorkerNodes:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Allow SSH Connections from WorkerNodes to Bastion
+      GroupId: !Ref BastionSecurityGroup
+      SourceSecurityGroupId: !Ref WorkerNodeSecurityGroup
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+
+
+  AllowIPv4SSHsOutboundToBastionFromWorkerNodes:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      Description: Allow SSH Connections to WorkerNodes from Bastion
+      GroupId: !Ref BastionSecurityGroup
+      SourceSecurityGroupId: !Ref WorkerNodeSecurityGroup
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
 
   AllowIPv4HTTPsOutboundFromEKSClusterToWorkerNodes:
     Type: AWS::EC2::SecurityGroupEgress
