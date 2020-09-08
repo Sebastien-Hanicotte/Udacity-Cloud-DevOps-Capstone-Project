@@ -1,0 +1,35 @@
+# NodeJS CircleCI 2.1 configuration file
+#
+# Check https://circleci.com/docs/reference-2-1/#version for more details
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: node:14.9.0
+    working_directory: /app
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "app/package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run:
+          name: run install
+          command: |
+            npm install --prefix app
+      - save_cache:
+          paths:
+            - ./app/node_modules
+          key: v1-dependencies-{{ checksum "app/package.json" }}
+      # Run Lint
+      - run:
+          name: run lint
+          command: npm run lint --prefix app
+      # Run Test
+      - run:
+          name: run test
+          command: CI=true npm test --prefix app
+orbs:
+  node: circleci/node@3.0.0
+#
