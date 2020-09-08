@@ -19,7 +19,11 @@ COPY app/. .
 
 RUN npm run build
 
+# Installing serve to propose production ready deployment
+RUN npm install -g serve
+
 USER node
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+# Running serve -s build -l 3000 to expose production ready react-js application
+CMD ["serve", "-s", "build", "-l", "3000"]
