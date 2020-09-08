@@ -82,10 +82,24 @@ fi
       }
     }
 
+    stage('Deploying to EKS') {
+        steps {
+            dir('k8s') {
+                withAWS(credentials: 'aws-credentials', region: 'eu-west-1') {
+                        sh "aws eks --region eu-west-1 update-kubeconfig --name capstone-cluster"
+                        sh "sed -i'' -e 's/git-version/${env.GIT_HASH}/g' capstone-deployment.yml"
+                        sh 'kubectl apply -f capstone-deployment.yml'
+                    }
+                }
+        }
+    }
+
     stage('Cleaning Docker up') {
       steps {
         script {
           sh "echo 'Cleaning Docker up'"
+          sh "docker stop capstone"
+          sh "docker container rm capstone"
           sh "docker system prune"
         }
 

@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: capstone-lbl
+spec:
+  type: LoadBalancer
+  selector:
+    app: capstone-app
+  ports:
+    - port: 80
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capstone-deploy
+spec:
+  selector:
+    matchLabels:
+      app: capstone-app
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: capstone-app
+    spec:
+      containers:
+        - name: capstone-pod
+          image: chtiseb/capstone-project:git-version
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  minReadySeconds: 10
