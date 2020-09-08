@@ -1,4 +1,4 @@
-[![CircleCi]([https://circleci.com/gh/Sebastien-Hanicotte/Udacity-Cloud-DevOps-Capstone-Project.svg?style=shield])](https://circleci.com/gh/Sebastien-Hanicotte/Udacity-Cloud-DevOps-Capstone-Project/)
+[![CircleCi](https://circleci.com/gh/Sebastien-Hanicotte/Udacity-Cloud-DevOps-Capstone-Project.svg?style=shield)](https://circleci.com/gh/Sebastien-Hanicotte/Udacity-Cloud-DevOps-Capstone-Project/)
 
 # Udacity-Cloud-DevOps-Capstone-Project
 This repository will be used to validate the Capstone Project of Udacity Cloud DevOps Classroom
