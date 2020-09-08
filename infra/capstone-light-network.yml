@@ -28,11 +28,6 @@ Parameters:
     Type: String
     Default: t2.small
 
-  JenkingInstanceType:
-    Description: EC2 instance type for the jenkins instance.
-    Type: String
-    Default: t2.micro
-
   KeyName:
     Description: EC2 KayPair Name
     Type: String
@@ -192,56 +187,6 @@ Resources:
         DesiredSize: 2
         MinSize: 1
         MaxSize: 3
-#
-#  JenkinsSecurityGroup:
-#    Type: AWS::EC2::SecurityGroup
-#    Properties:
-#      GroupDescription: Allow HTTP to EC2 and SHH access
-#      VpcId: !Ref VPC
-#      SecurityGroupIngress:
-#        -   IpProtocol: tcp
-#            FromPort: 80
-#            ToPort: 80
-#            CidrIp: !Ref SSHLocation
-#        -   IpProtocol: tcp
-#            FromPort: 22
-#            ToPort: 22
-#            CidrIp: !Ref SSHLocation
-#      SecurityGroupEgress:
-#        -   IpProtocol: tcp
-#            FromPort: 0
-#            ToPort: 65535
-#            CidrIp: 0.0.0.0/0
-
-#  JenkinsInstance:
-#    Type: AWS::EC2::Instance
-#    Properties:
-#    UserData:
-#    Fn::Base64: !Sub |
-#    #!/bin/bash
-#      sudo apt-get update -y
-#      sudo apt-get install default-jdk wget -y
-#      cd /home/ubuntu
-#      wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
-#      sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
-#      sudo apt-get update -y
-#      sudo apt-get install jenkins tidy -y
-#      sudo systemctl status jenkins
-#    SecurityGroupIds:
-#      -   Fn::GetAtt: JenkinsSecurityGroup.GroupId
-#    SubnetId: !Ref Subnet1
-#    ImageId: ami-005bdb005fb00e791
-#    InstanceType: !Ref JenkingInstanceType
-#    KeyName: !Ref KeyName
-
-#  JenkinsIPAddress:
-#    Type: AWS::EC2::EIP
-#
-#  JenkinsIPAddressAssociation:
-#    Type: AWS::EC2::EIPAssociation
-#    Properties:
-#    InstanceId: !Ref JenkinsInstance
-#    EIP: !Ref JenkinsIPAddress
 
 Outputs:
   EKS:
@@ -267,7 +212,3 @@ Outputs:
   NodeGroupArn:
     Value: !GetAtt NodeGroup.Arn
     Description: Cluster Worker Nodes
-
-#  Jenkins:
-#    Description: A reference to the created Jenkins instance
-#    Value: !Ref JenkinsIPAddress
